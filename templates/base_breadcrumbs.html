@@ -1,7 +1,7 @@
 {# can be more *programmable*, in the specific type pages, than this hardcoded style #}
 {% macro crumb(url, name, pos) %}
   <span itemprop='itemListElement' itemscope itemtype='http://schema.org/ListItem'>
-    <a itemprop='item' href='{{ SITEURL }}/{{ url }}'><span itemprop='name'>{{ name }}</span></a>
+    <a itemprop='item' href='{{ SITEURL }}/{{ url.replace('index.html', '') }}'><span itemprop='name'>{{ name }}</span></a>
     <meta itemprop='position' content='{{ pos }}'/>
   </span>
   &lt;
