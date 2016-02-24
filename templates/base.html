@@ -3,6 +3,9 @@
   <title>{% block title %}{% endblock %}{% if self.title() %} - {% endif %}{{ SITENAME }}</title>
   <meta charset='utf-8'/>
   <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  {% if self.canonical_link() %}
+    <meta rel='canonical' href='{{ SITEURL}}/{% block canonical_link %}{% endblock %}'/>
+  {% endif %}
   {% include 'base_feed_links.html' %}
   {% if CSS_FILE %}
     {% if CSS_INLINE %}

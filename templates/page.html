@@ -1,8 +1,1 @@
 {% extends 'article.html' %}
-
-{% block title %}{{ page.title }}{% endblock %}
-
-{% block main %}
-  {% import 'parts.html' as parts with context %}
-  {{ parts.article(page) }}
-{% endblock main %}

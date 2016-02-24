@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ article.title }}{% endblock %}
+{% block title %}{{ (article or page).title }}{% endblock %}
+{% block canonical_link %}{{ (article or page).url }}{% endblock %}
 
 {% block main %}
   {% import 'parts.html' as parts with context %}
-  {{ parts.article(article) }}
+  {{ parts.article(article or page) }}
 {% endblock main %}
