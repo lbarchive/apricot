@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block title %}Tags{% endblock %}
+{% block content_title %}Tags{% endblock %}
+
+{% block main %}
+  {% import 'parts.html' as parts %}
+  {% for tag, articles in tags %}
+    {{ parts.tag('tag', tag) }} ({{ articles|length }})
+  {% endfor %}
+{% endblock %}

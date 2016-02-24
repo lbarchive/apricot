@@ -1,0 +1,107 @@
+{% macro feed(link, type, title) %}
+  <link href='{{ FEED_DOMAIN }}/{{ link }}' rel='alternate' type='application/{{ type|lower }}+xml' title='{{ SITENAME|escape }} {% if title %}{{ title }}{% endif %} {{ type }} Feed'>
+{% endmacro %}
+
+{% macro author(obj) %}
+  <span itemprop='author' itemscope itemtype='https://schema.org/Person' class='author'>
+    <span itemprop='name' class='name'>
+      {%- if obj.save_as -%}
+        <a itemprop='url' rel='author' href='{{ SITEURL }}/{{ obj.url }}'>{{ obj.name }}</a>
+      {%- else -%}
+        {{- obj.name -}}
+      {%- endif -%}
+    </span>
+  </span>
+{% endmacro %}
+
+{% macro translation(obj) %}
+  <span itemprop='workTranslation' itemscope itemtype='https://schema.org/BlogPosting' class='translation'>
+    <meta itemprop='name' content='{{ obj.title|escape }}'/>
+    <meta itemprop='inLanguage' content='{{ obj.lang }}'/>
+    <a itemprop='url' rel='alternate' type='text/html' hreflang='{{ obj.lang }}' href='{{ SITEURL }}/{{ obj.url }}' class='translation'>{{ obj.lang }}</a>
+  </span>
+{%- endmacro %}
+
+{% macro tag(type, obj, attrs = None) %}
+  <span{{ attrs and attrs|xmlattr or '' }} class='{{ type }}'>
+    {%- if obj.save_as -%}
+      <a href='{{ SITEURL }}/{{obj.url}}'>{{ obj.name }}</a>
+    {%- else -%}
+      {{- obj.name -}}
+    {%- endif -%}
+  </span>
+{% endmacro %}
+
+{% macro article(obj, full=True) %}
+  <article{% if obj.template == 'article' %} itemprop='{{ 'mainEntity' if full else 'blogPost' }}' itemscope itemtype='https://schema.org/BlogPosting'{% endif %}{% if not full %} class='summary'{% endif %}>
+    <meta itemprop='headline' content='{{ obj.title|truncate(108)|escape }}'/>
+    <link itemprop='publisher' itemscope itemtype='https://schema.org/Organization' itemref='publisher' href='{{ SITEURL }}'/>
+    <link itemprop='mainEntityOfPage' href='{{ SITEURL }}/{{ obj.url }}'/>
+    <meta itemprop='inLanguage' content='{{ obj.lang }}'/>
+    {% if not obj.in_default_lang %}
+      {% for trans in obj.translations %}
+        {% if trans.in_default_lang %}
+          <meta itemprop='translationOfWork' itemscope itemtype='https://schema.org/BlogPosting' itemid='{{ trans.url }}'/>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if obj.template == 'article' %}
+      {# have to double strip, some tags remains #}
+      <meta itemprop='wordCount' content='{{ obj.content|striptags|striptags|wordcount }}'/>
+    {% endif %}
+
+    {% if obj.thumbnail %}
+      {% if full %}
+        <meta itemprop='thumbnail' content='{{ obj.thumbnail }}'/>
+      {% else %}
+        <img itemprop='thumbnail' class='thumbnail' src='{{ obj.thumbnail }}'/>
+      {% endif %}
+    {% endif %}
+
+    <header>
+      {% if obj.translations %}
+      <div class='translations'>
+        {% for trans_obj in obj.translations %}
+          {{ translation(trans_obj) }}
+        {% endfor %}
+      </div>
+      {% endif %}
+      <h2 itemprop='name'><a href='{{ SITEURL }}/{{ obj.url }}'>{{ obj.title|escape }}</a></h2>
+      <p>
+        <time itemprop='datePublished' datetime='{{ obj.date }}' title='{{ obj.date }}'>{{ obj.locale_date }}</time>
+        {% if obj.modified %}
+          *
+          <time itemprop='dateModified' datetime='{{ obj.modified }}' title='{{ obj.modified }}'>{{ obj.locale_modified }}</time>
+        {% endif %}
+      </p>
+      <p class='author-cat-tag'>
+        {% for obj in obj.authors or (obj.author, ) %}
+          {{ author(obj) }}
+        {% endfor %}
+
+        {{ tag('category', obj.category, {'itemprop': 'articleSection'} if obj.template == 'article' else {}) }}
+
+        {% for t in obj.tags %}
+          {{ tag('tag', t, {'itemprop': 'keywords'}) }}
+        {% endfor %}
+      </p>
+    </header>
+
+    {% set summary = obj.summary|striptags|striptags|escape %}
+    {% if full %}
+      <meta itemprop='description' content='{{ summary }}'>
+      <div>
+        {{ obj.content }}
+      </div>
+    {% else %}
+      <div class='summary'>
+        <p itemprop='description'>
+          {{ summary }}
+        </p>
+        <span class='readmore'>
+          <a href='{{ SITEURL }}/{{ obj.url }}'>&gt;&gt;&gt;</a>
+        </span>
+      </div>
+    {% endif %}
+  </article>
+{% endmacro %}

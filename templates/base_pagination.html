@@ -1,0 +1,32 @@
+{% if articles_page and articles_page.has_other_pages() %}
+  <div id='paginator'>
+    {% if articles_page.has_previous() %}
+      <span><a rel='prev' href='{{ SITEURL }}/{{ articles_previous_page.url }}'>&lt;</a></span>
+    {% endif %}
+
+    {% set pr = articles_paginator.page_range %}
+    {% set pc = 3 %}
+    {% set pn = articles_page.number %}
+    {# no Python set(), will filter duplicate page numbers in loop  #}
+    {% set pages_list = (pr[:pc] + pr[pn - pc: pn + pc] + pr[:-pc])|sort %}
+    {% set last_p = 0 %}
+    {% for p in pages_list %}
+      {#- can be donw with {% continue %}, but it requires extension -#}
+      {% if last_p != p %}
+        {% if p - last_p > 1 %}
+          <span>...</span>
+        {% endif %}
+        {% if p == pn %}
+          <span>{{ p }}</span>
+        {% else %}
+          <span><a href='{{ SITEURL }}/{{ articles_paginator.page(p).url }}'>{{ p }}</a></span>
+        {% endif %}
+        {% set last_p = p %}
+      {% endif %}
+    {% endfor %}
+
+    {% if articles_page.has_next() %}
+      <span><a rel='next' href='{{ SITEURL }}/{{ articles_next_page.url }}'>&gt;</a></span>
+    {% endif %}
+  </div>
+{% endif %}

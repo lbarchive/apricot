@@ -1,0 +1,46 @@
+{# translation feed only available in article or page pages #}
+{% for type, feeds in (
+  ('Atom', (
+    ('', FEED_ATOM, None),
+    ('Full', FEED_ALL_ATOM, None),
+    ('Author', AUTHOR_FEED_ATOM, author),
+    ('Category', CATEGORY_FEED_ATOM, category),
+    ('Tag', TAG_FEED_ATOM, tag),
+    ('Translation', TRANSLATION_FEED_ATOM, article or page or None),
+  )),
+  ('RSS', (
+    ('', FEED_RSS, None),
+    ('Full', FEED_ALL_RSS, None),
+    ('Author', AUTHOR_FEED_RSS, author),
+    ('Category', CATEGORY_FEED_RSS, category),
+    ('Tag', TAG_FEED_RSS, tag),
+    ('Translation', TRANSLATION_FEED_RSS, article or page or None),
+  )),
+) %}
+  {% for title, link, obj in feeds %}
+    {% if title == 'Translation' %}
+      {% if link and obj and obj.translations %}
+        {% for trans_obj in obj.translations %}
+          {% set lang = trans_obj.lang %}
+          {% set link = link|format(lang) %}
+          {% set title = title ~ ' ' + lang %}
+          {% import 'parts.html' as parts with context %}
+          {{ parts.feed(link, type, title) -}}
+        {% endfor %}
+      {% endif %}
+    {% else %}
+      {% if link %}
+        {% if obj %}
+          {% set link = link|format(obj.slug) if link and obj else None %}
+          {% set title = title + ' ' + obj.name %}
+        {% elif '%s' in link %}
+          {% set link = None %}
+        {% endif %}
+      {% endif %}
+      {% if link %}
+        {% import 'parts.html' as parts with context %}
+        {{ parts.feed(link, type, title) -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endfor -%}

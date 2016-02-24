@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<head>
+  <title>{% block title %}{% endblock %}{% if self.title() %} - {% endif %}{{ SITENAME }}</title>
+  <meta charset='utf-8'/>
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  {% include 'base_feed_links.html' %}
+  {% if CSS_FILE %}
+    {% if CSS_INLINE %}
+      <style>
+        {% include CSS_FILE %}
+      </style>
+    {% else %}
+      <link rel='stylesheet' href='{{ SITEURL }}{% if THEME_STATIC_DIR %}/{{ THEME_STATIC_DIR }}{% endif %}/css/{{ CSS_FILE }}'/>
+    {% endif %}
+  {% endif %}
+  {% if FAVICON %}
+    <link rel='icon' href='{{ FAVICON }}'/>
+  {% endif %}
+</head>
+
+<body itemscope itemtype='https://schema.org/WebPage' itemref='publisher-name publisher-description'>
+  <div id='header'>
+    <div class='handle'><span class='dots'></span></div>
+    <div class='content'>
+      <div itemscope itemtype='https://schema.org/Organization' itemid='{{ SITEURL }}'>
+        <header id='publisher'>
+          <h1><a itemprop='url' rel='home' href='{{ SITEURL }}'><span itemprop='name' id='publisher-name'>{{ SITENAME|escape }}</span></a></h1>
+          {% if SITE_DESCRIPTION %}
+            <p itemprop='description' id='publisher-description'>{{ SITE_DESCRIPTION}}</p>
+          {% endif %}
+        </header>
+      </div>
+
+      {% include 'base_navigation.html' %}
+    </div>
+  </div>
+
+  <main>
+    {% if self.content_title() %}
+      <h2 itemprop='headline' id='content-title'>{% block content_title %}{% endblock %}</h2>
+    {% endif %}
+
+    {% if article or page %}
+      {% block main %}
+      {% endblock %}
+    {% else %}
+      <div itemprop='mainEntity' itemscope itemtype='https://schema.org/Blog'>
+        {{ self.main() }}
+      </div>
+    {% endif %}
+  </main>
+
+  {% include 'base_pagination.html' %}
+
+  <footer>
+    {% set attribution = ATTRIBUTION if ATTRIBUTION is defined else 0 %}
+    {% if attribution is string %}
+      {{ attribution }}
+    {% elif attribution > 0 %}
+    <address class="vcard body attribution">
+      Proudly powered by <a href="http://getpelican.com/">Pelican</a>
+      {%- if attribution > 1 -%}
+        , which takes great advantage of <a href="https://python.org">Python</a>
+        {%- if attribution > 2 -%}
+          {%- import 'meta.html' as meta -%}
+          , with <a href='{{ meta.THEME_URL }}' title='{{ meta.THEME_NAME ~ ' Version ' ~ meta.THEME_VERSION}}'>{{ meta.THEME_NAME }}</a> theme
+          {%- if attribution > 3 %}
+            by <a href='{{ meta.THEME_AUTHOR_URL }}'>{{ meta.THEME_AUTHOR }}</a>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+      .
+    </address>
+    {% else %}
+      <!-- Proudly powered by Pelican which takes great advantage of Python, with {{ meta.THEME_NAME }} theme (v{{ meta.THEME_VERSION }}) by {{ meta.THEME_AUTHOR }}. -->
+    {% endif %}
+
+    {% if COPYRIGHT %}
+      <p id='copyright'>{{ COPYRIGHT }}</p>
+    {% endif %}
+  </footer>
+</body>

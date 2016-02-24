@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Archives{% endblock %}
+{% block content_title %}Archives{% endblock %}
+
+{% block main %}
+  <dl id='period-archives'>
+    {% set last_year = None %}
+    {% set last_month = None %}
+    {% for article in dates %}
+      {% if last_year != article.date.year %}
+        {% if not loop.first %}
+    </dd>
+        {% endif %}
+    <dt><a href='{{ SITEURL }}/{{ YEAR_ARCHIVE_SAVE_AS.format(date=article.date) }}'>{{ article.date.year }}</a></dt>
+    <dd>
+      {% endif %}
+      {% if last_year != article.date.year or last_month != article.date.month %}
+        {% if not loop.first %}
+          </ul>
+        </dd>
+      </dl>
+        {% endif %}
+      <dl>
+        <dt><a href='{{ SITEURL }}/{{ MONTH_ARCHIVE_SAVE_AS.format(date=article.date) }}'>{{ article.date.strftime('%B') }}</a></dt>
+        <dd>
+          <ul class='days'>
+      {% endif %}
+            <li>{{ article.date.day }} <a href='{{ SITEURL }}/{{ article.url }}'>{{ article.title }}</a></li>
+      {% if loop.last %}
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+      {% endif %}
+      {% set last_year = article.date.year %}
+      {% set last_month = article.date.month %}
+    {% endfor %}
+  </dl>
+{% endblock %}

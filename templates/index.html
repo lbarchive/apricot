@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% block content_title %}All Articles{% endblock %}
+
+{% block main %}
+  {% for article in articles_page.object_list %}
+    {% import 'parts.html' as parts with context %}
+    {{ parts.article(article, False) }}
+  {% endfor %}
+{% endblock main %}

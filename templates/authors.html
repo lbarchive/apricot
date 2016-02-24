@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block title %}Authors{% endblock %}
+{% block content_title %}Authors{% endblock %}
+
+{% block main %}
+  {% import 'parts.html' as parts %}
+  {% for author, articles in authors %}
+    {{ parts.author(author) }} ({{ articles|length }})
+  {% endfor %}
+{% endblock %}

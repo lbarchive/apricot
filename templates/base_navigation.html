@@ -1,0 +1,39 @@
+{% set direct_pages = [] %}
+{% for tmpl in DIRECT_TEMPLATES %}
+  {% if tmpl not in ('index', 'categories') %}
+    {# not the best option, because there is no way to get the variable in the
+     # name of `tmpl|upper ~ '_SAVE_AS'` but this would have to do #}
+    {% set _ = direct_pages.append({'title': tmpl|title, 'url': tmpl ~ '.html'}) %}
+  {% endif %}
+{% endfor %}
+
+<nav itemscope itemtype='https://schema.org/SiteNavigationElement'>
+  <div class='container'>
+    <div class='handle'>(Pages)</div>
+    <div class='content'>
+      {% for p in (pages if DISPLAY_PAGES_ON_MENU else []) + direct_pages %}
+        (<span itemprop='name'><a itemprop='url' href='{{ SITEURL }}/{{ p.url }}' {% if p == page or p.title|lower == page_name %}class='active'{% endif %}>{{ p.title }}</a></span>)
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if 'categories' in DIRECT_TEMPLATES and DISPLAY_CATEGORIES_ON_MENU %}
+    <div class='container' id='nav-categories-container'>
+      <div class='handle'>
+        {<span itemprop='name'><a itemprop='url' href='{{ SITEURL }}/{{ CATEGORIES_SAVE_AS or 'categories.html' }}'>Categories</a></span>}
+      </div>
+      <div class='content'>
+        {% for c, _ in categories|reverse %}
+          <span itemprop='name' class='category'><a itemprop='url' href='{{ SITEURL }}/{{ c.url }}' {% if c == category %}class='active'{% endif %}>{{ c.name }}</a></span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class='container' id='nav-breadcrumb-container'>
+    <div class='handle'>&gt;</div>
+    <div class='content'>
+      {% include 'base_breadcrumbs.html' %}
+    </div>
+  </div>
+</nav>
