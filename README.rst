@@ -12,6 +12,10 @@ avoided others' code as best as I can.
 
 .. _Pointless Blog of Apricot: https://pba.yjl.im
 
+You can read this theme's blog_.
+
+.. _blog: http://pelican-apricot.bitbucket.org
+
 
 .. contents:: **Contents**
    :local:
