@@ -7,6 +7,17 @@
   &lt;
 {% endmacro %}
 
+{% macro crumb_home() %}
+  <span itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'>
+    <meta itemprop='name' content='Home'/>
+    <span itemprop='item' itemscope itemtype='https://schema.org/Blog'>
+      <meta itemprop='name' content='{{ SITENAME|escape }}'/>
+      <a itemprop='url' href='{{ SITEURL }}'>Home</a>
+    </span>
+    <meta itemprop='position' content='1'/>
+  </span>
+{% endmacro %}
+
 <div itemscope itemtype='https://schema.org/BreadcrumbList'>
   {% if article or page %}
     {% set obj = article or page %}
@@ -55,12 +66,29 @@
   {% elif page_name.startswith('archives') %}
     {{ crumb(ARCHIVES_SAVE_AS or 'archives.html', 'Archives', 2) }}
   {% endif %}
-  <span itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'>
-    <meta itemprop='name' content='Home'/>
-    <span itemprop='item' itemscope itemtype='https://schema.org/Blog'>
-      <meta itemprop='name' content='{{ SITENAME|escape }}'/>
-      <a itemprop='url' href='{{ SITEURL }}'>Home</a>
-    </span>
-    <meta itemprop='position' content='1'/>
-  </span>
+  {{ crumb_home() }}
+</div>
+
+<div itemscope itemtype='https://schema.org/BreadcrumbList'>
+  {% if article or page %}
+    {% set obj = article or page %}
+    {{ crumb(obj.save_as, obj.title|truncate(20), 5) }}
+
+    {% set d = (
+        (4, '%d', DAY_ARCHIVE_SAVE_AS),
+        (3, '%B', MONTH_ARCHIVE_SAVE_AS),
+        (2, '%Y', YEAR_ARCHIVE_SAVE_AS),
+      )
+    %}
+    {% for position, format, save_as in d %}
+      {% set title = obj.date.strftime(format) %}
+      {% if save_as %}
+        {{ crumb(save_as.format(date=obj.date), title, position) }}
+      {% else %}
+        {{ title }}
+        &lt;
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {{ crumb_home() }}
 </div>
