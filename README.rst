@@ -12,9 +12,10 @@ avoided others' code as best as I can.
 
 .. _Pointless Blog of Apricot: https://pba.yjl.im
 
-You can read this theme's blog_.
+You can read this theme's blog_ and check out the styles_.
 
 .. _blog: http://pelican-apricot.bitbucket.org
+.. _styles: http://pelican-apricot.bitbucket.org/pages/test-style.html
 
 
 .. contents:: **Contents**
