@@ -4,7 +4,7 @@
 {% block content_title %}Authors{% endblock %}
 
 {% block main %}
-  {% import 'parts.html' as parts %}
+  {% import 'parts.html' as parts with context %}
   {% for author, articles in authors %}
     {{ parts.author(author) }} ({{ articles|length }})
   {% endfor %}
