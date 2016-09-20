@@ -4,7 +4,7 @@
 {% block content_title %}Tags{% endblock %}
 
 {% block main %}
-  {% import 'parts.html' as parts %}
+  {% import 'parts.html' as parts with context %}
   {% for tag, articles in tags %}
     {{ parts.tag('tag', tag) }} ({{ articles|length }})
   {% endfor %}
